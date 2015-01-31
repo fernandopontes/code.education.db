@@ -2,7 +2,7 @@
 
     <div class="blog-header">
         <h1 class="blog-title">Busca</h1>
-        <p class="lead blog-description">Resultados encontrados para <?php print(htmlspecialchars($_GET['palavra'])); ?>.</p>
+        <p class="lead blog-description">Resultados encontrados para: <strong><?php print(htmlspecialchars($_GET['palavra'])); ?></strong></p>
     </div>
 
     <div class="row">
@@ -11,52 +11,63 @@
 
             <div class="blog-post">
                 <?php
-                $num_result = 0;
-
-                // Procura na tabela site_sobre
-                $consulta = $conexao->prepare("SELECT * FROM site_sobre WHERE texto LIKE :busca");
-                $palavra = "%" . $_GET['palavra'] . "%";
-                $consulta->bindParam(':busca', $palavra, PDO::PARAM_STR);
-                $consulta->execute();
-
-                $resultado = $consulta->fetchAll();
-
-                if(count($resultado) > 0)
+                if($_GET['palavra'] != "")
                 {
-                    print('<a href="empresa">Acesse a página <strong>Sobre a empresa</strong> para ver o resultado.</a><br>');
-                    $num_result++;
+                    $num_result = 0;
+
+                    // Procura na tabela site_sobre
+                    $consulta = $conexao->prepare("SELECT * FROM site_sobre WHERE texto LIKE :busca");
+                    $palavra = "%" . $_GET['palavra'] . "%";
+                    $consulta->bindParam(':busca', $palavra, PDO::PARAM_STR);
+                    $consulta->execute();
+
+                    $resultado = $consulta->fetchAll();
+
+                    if(count($resultado) > 0)
+                    {
+                        print('<a href="empresa">Acesse a página <strong>Sobre a empresa</strong> para ver o resultado.</a><br>');
+                        $num_result++;
+                    }
+
+                    // Procura na tabela site_produtos
+                    $consulta = $conexao->prepare("SELECT * FROM site_produtos WHERE texto LIKE :busca OR texto LIKE :busca2");
+                    $palavra = "%" . $_GET['palavra'] . "%";
+                    $palavra2 = "%" . $_GET['palavra'] . "%";
+                    $consulta->bindParam(':busca', $palavra, PDO::PARAM_STR);
+                    $consulta->bindParam(':busca2', $palavra2, PDO::PARAM_STR);
+                    $consulta->execute();
+
+                    $resultado = $consulta->fetchAll();
+
+                    if(count($resultado) > 0)
+                    {
+                        print('<a href="produtos">Acesse a página <strong>Produtos</strong> para ver o resultado.</a><br>');
+                        $num_result++;
+                    }
+
+                    // Procura na tabela site_servicos
+                    $consulta = $conexao->prepare("SELECT * FROM site_servicos WHERE texto LIKE :busca OR texto LIKE :busca2");
+                    $palavra = "%" . $_GET['palavra'] . "%";
+                    $palavra2 = "%" . $_GET['palavra'] . "%";
+                    $consulta->bindParam(':busca', $palavra, PDO::PARAM_STR);
+                    $consulta->bindParam(':busca2', $palavra2, PDO::PARAM_STR);
+                    $consulta->execute();
+
+                    $resultado = $consulta->fetchAll();
+
+                    if(count($resultado) > 0)
+                    {
+                        print('<a href="servicos">Acesse a página <strong>Serviços</strong> para ver o resultado.</a><br>');
+                        $num_result++;
+                    }
+
+                    if($num_result == 0)
+                    {
+                        print('<p class="alert alert-warning">Nenhum resultado encontrado para o termo procurado!</a>');
+                    }
                 }
-
-                // Procura na tabela site_produtos
-                $consulta = $conexao->prepare("SELECT * FROM site_produtos WHERE texto LIKE :busca OR texto LIKE :busca2");
-                $palavra = "%" . $_GET['palavra'] . "%";
-                $palavra2 = "%" . $_GET['palavra'] . "%";
-                $consulta->bindParam(':busca', $palavra, PDO::PARAM_STR);
-                $consulta->bindParam(':busca2', $palavra2, PDO::PARAM_STR);
-                $consulta->execute();
-
-                $resultado = $consulta->fetchAll();
-
-                if(count($resultado) > 0)
-                {
-                    print('<a href="produtos">Acesse a página <strong>Produtos</strong> para ver o resultado.</a><br>');
-                    $num_result++;
-                }
-
-                // Procura na tabela site_servicos
-                $consulta = $conexao->prepare("SELECT * FROM site_servicos WHERE texto LIKE :busca OR texto LIKE :busca2");
-                $palavra = "%" . $_GET['palavra'] . "%";
-                $palavra2 = "%" . $_GET['palavra'] . "%";
-                $consulta->bindParam(':busca', $palavra, PDO::PARAM_STR);
-                $consulta->bindParam(':busca2', $palavra2, PDO::PARAM_STR);
-                $consulta->execute();
-
-                $resultado = $consulta->fetchAll();
-
-                if(count($resultado) > 0)
-                {
-                    print('<a href="servicos">Acesse a página <strong>Serviços</strong> para ver o resultado.</a><br>');
-                    $num_result++;
+                else {
+                    print('<p class="alert alert-danger">Digite algo no campo busca!</a>');
                 }
                 ?>
             </div><!-- /.blog-post -->
