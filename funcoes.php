@@ -6,7 +6,6 @@ function carregar_pagina($config, $rotas)
 
     // Utilizado para recuperar o nome do arquivo do script que está executando, relativa à raiz do documento
     $diretorio_atual = explode('/', $_SERVER['PHP_SELF']);
-    $arquivo_index = array_pop($diretorio_atual); // Retira o último elemento do array $diretorio_atual
 
     $url_atual = ltrim(str_replace(ltrim(implode('/', $diretorio_atual), '/'), "", ltrim($_SERVER['REQUEST_URI'], '/')), '/');
 
@@ -25,11 +24,11 @@ function carregar_pagina($config, $rotas)
                 $pagina = array('pagina' => $rotas[$url_atual], 'status-rota' => TRUE, 'uri' => $url_atual);
             }
             else {
-                header('Location:'. $config['erro-404']);
+                header('Location:' . $config['erro-404']);
             }
         }
         else {
-            header('Location:'. $config['erro-404']);
+            header('Location:' . $config['erro-404']);
         }
     }
     else {
@@ -59,4 +58,51 @@ function conexao_db($config)
         print($e->getTraceAsString()."\n");
 
     }
+}
+
+function verifica_login($conexao)
+{
+    $status = 0;
+
+    // Valida o email
+    if(filter_var($_POST['email'], FILTER_VALIDATE_EMAIL))
+    {
+        $consulta = $conexao->prepare("SELECT nome, email, senha, situacao FROM site_usuarios WHERE email=:email");
+        $email = $_POST['email'];
+        $consulta->bindParam(':email', $email, PDO::PARAM_STR);
+        $consulta->execute();
+
+        $resultado = $consulta->fetch(PDO::FETCH_ASSOC);
+
+        if(count($resultado) > 0)
+        {
+            // Valida a senha
+            if(password_verify($_POST['senha'], $resultado['senha']))
+            {
+                // Verifica se o usuário está ativo
+                if($resultado['situacao'] == 'Ativo')
+                {
+                    $status = 1;
+                    $_SESSION['logado'] = true;
+                    $_SESSION['nome_user'] = $resultado['nome'];
+                    $_SESSION['email_user'] = $resultado['email'];
+                }
+                else {
+                    $status = 4;
+                }
+            }
+            else {
+                $status = 3;
+            }
+
+        }
+        else {
+            $status = 3;
+        }
+    }
+    else {
+       $status = 2;
+    }
+
+    return $status;
 }

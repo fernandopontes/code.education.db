@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 ///// Define as configurações do site //////
 include_once 'config.php';
 
@@ -10,9 +12,9 @@ include_once 'funcoes.php';
 
 $conexao = conexao_db($config);
 
-include_once 'header.php';
-
 $pagina = carregar_pagina($config, $rotas);
+
+include_once 'header.php';
 
 if($pagina['status-rota'])
 {

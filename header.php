@@ -42,6 +42,7 @@
                         <li <?php (isset($pagina['uri']) && $pagina['uri'] == "produtos") ? print('class="active"') : NULL; ?>><a href="produtos">Produtos</a></li>
                         <li <?php (isset($pagina['uri']) && $pagina['uri'] == "servicos") ? print('class="active"') : NULL; ?>><a href="servicos">Serviços</a></li>
                         <li <?php (isset($pagina['uri']) && $pagina['uri'] == "contato") ? print('class="active"') : NULL; ?>><a href="contato">Contato</a></li>
+                        <li <?php (isset($pagina['uri']) && $pagina['uri'] == "painel") ? print('class="active"') : NULL; ?>><a href="painel">Painel administrativo</a></li>
                     </ul>
                     <form action="busca" method="get" class="navbar-form navbar-right">
                         <div class="input-group">
